@@ -1,6 +1,14 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const daysData = document.querySelector('[data-days]');
+const hrs = document.querySelector('[data-hours]');
+const min = document.querySelector('[data-minutes]');
+const secs = document.querySelector('[data-seconds]');
+const startBtn = document.querySelector('[data-start]');
+startBtn.disabled = true;
+let countdownInterval = null;
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -8,41 +16,43 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     const selectedDate = selectedDates[0];
-    console.log(selectedDate);
+    function checkDate() {
+      const currentDate = new Date();
+      const timeDifference = selectedDate.getTime() - currentDate.getTime();
 
-    const daysData = document.querySelector('[data-days]');
-    const hrs = document.querySelector('[data-hours]');
-    const min = document.querySelector('[data-minutes]');
-    const secs = document.querySelector('[data-seconds]');
-    const startBtn = document.querySelector('[data-start]');
-    startBtn.disabled = false;
-
-    startBtn.addEventListener('click', () => {
-      startBtn.disabled = true;
-      const countdownInterval = setInterval(updateCountdown, 1000);
-
-      function updateCountdown() {
-        const currentDate = new Date();
-        const timeDifference = selectedDate.getTime() - currentDate.getTime();
-
-        if (timeDifference <= 0) {
-          clearInterval(countdownInterval);
-          window.alert('Please choose a date in the future');
-          return;
-        } else {
-          const { days, hours, minutes, seconds } = convertMs(timeDifference);
-
-          daysData.textContent = addZero(days);
-          hrs.textContent = addZero(hours);
-          min.textContent = addZero(minutes);
-          secs.textContent = addZero(seconds);
-        }
+      if (timeDifference <= 0) {
+        window.alert('Please choose a date in the future');
+        return;
       }
-    });
+      startBtn.disabled = false;
+    }
+    checkDate();
+    console.log(selectedDate);
   },
 };
 
-flatpickr('#datetime-picker', options);
+const datePick = flatpickr('#datetime-picker', options);
+
+startBtn.addEventListener('click', () => {
+  const countdownInterval = setInterval(updateCountdown, 1000);
+  function updateCountdown() {
+    const currentDate = new Date();
+    const selectedDate = datePick.selectedDates[0];
+    const timeDifference = selectedDate.getTime() - currentDate.getTime();
+
+    if (timeDifference <= 0) {
+      clearInterval(countdownInterval);
+      return;
+    }
+
+    const { days, hours, minutes, seconds } = convertMs(timeDifference);
+
+    daysData.textContent = addZero(days);
+    hrs.textContent = addZero(hours);
+    min.textContent = addZero(minutes);
+    secs.textContent = addZero(seconds);
+  }
+});
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
