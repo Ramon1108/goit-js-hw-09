@@ -7,14 +7,12 @@ const DELAY_TIME = 1000;
 
 function startChangeColor() {
   intervalId = setInterval(changeBackgroundColor, 1000);
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
+  changeBtn(true);
 }
 
 function stopChangeColor() {
   clearInterval(intervalId);
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
+  changeBtn(false);
 }
 
 function changeBackgroundColor() {
@@ -25,4 +23,8 @@ function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215)
     .toString(16)
     .padStart(6, 0)}`;
+}
+function changeBtn(change) {
+  startBtn.disabled = change;
+  stopBtn.disabled = !change;
 }

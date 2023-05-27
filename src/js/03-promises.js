@@ -11,18 +11,15 @@ function createPromise(position, delay) {
   });
 }
 
-const delayInput = document.querySelector('input[name="delay"]');
-const stepInput = document.querySelector('input[name="step"]');
-const amountInput = document.querySelector('input[name="amount"]');
-const submitButton = document.querySelector('button[type="submit"]');
+const form = document.querySelector('.form');
 
-submitButton.addEventListener('click', event => {
+form.addEventListener('submit', event => {
   event.preventDefault();
   console.clear();
 
-  const delay = parseInt(delayInput.value);
-  const step = parseInt(stepInput.value);
-  const amount = parseInt(amountInput.value);
+  const delay = parseInt(form.elements.delay.value);
+  const step = parseInt(form.elements.step.value);
+  const amount = parseInt(form.elements.amount.value);
 
   let currentDelay = delay;
 

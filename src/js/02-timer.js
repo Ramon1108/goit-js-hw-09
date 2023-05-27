@@ -16,17 +16,16 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     const selectedDate = selectedDates[0];
-    function checkDate() {
-      const currentDate = new Date();
-      const timeDifference = selectedDate.getTime() - currentDate.getTime();
 
-      if (timeDifference <= 0) {
-        window.alert('Please choose a date in the future');
-        return;
-      }
-      startBtn.disabled = false;
+    const timeDifference = selectedDate.getTime() - Date.now();
+
+    if (timeDifference <= 0) {
+      alert('Please choose a date in the future');
+      startBtn.disabled = true;
+      return;
     }
-    checkDate();
+    startBtn.disabled = false;
+
     console.log(selectedDate);
   },
 };
@@ -34,25 +33,28 @@ const options = {
 const datePick = flatpickr('#datetime-picker', options);
 
 startBtn.addEventListener('click', () => {
-  const countdownInterval = setInterval(updateCountdown, 1000);
-  function updateCountdown() {
-    const currentDate = new Date();
-    const selectedDate = datePick.selectedDates[0];
-    const timeDifference = selectedDate.getTime() - currentDate.getTime();
-
-    if (timeDifference <= 0) {
-      clearInterval(countdownInterval);
-      return;
-    }
-
-    const { days, hours, minutes, seconds } = convertMs(timeDifference);
-
-    daysData.textContent = addZero(days);
-    hrs.textContent = addZero(hours);
-    min.textContent = addZero(minutes);
-    secs.textContent = addZero(seconds);
-  }
+  countdownInterval = setInterval(updateCountdown, 1000);
 });
+
+function updateCountdown() {
+  const selectedDate = datePick.selectedDates[0];
+  const timeDifference = selectedDate.getTime() - Date.now();
+
+  if (timeDifference <= 0) {
+    clearInterval(countdownInterval);
+    return;
+  }
+
+  const { days, hours, minutes, seconds } = convertMs(timeDifference);
+  objValue(daysData, hrs, min, secs, days, hours, minutes, seconds);
+}
+
+function objValue(day, hour, min, sec, days, hours, minutes, seconds) {
+  day.textContent = addZero(days);
+  hour.textContent = addZero(hours);
+  min.textContent = addZero(minutes);
+  sec.textContent = addZero(seconds);
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
